@@ -1,4 +1,4 @@
-/.idea/
+#/.idea/
 
 # `target/` folder in all sub-directories
 **/target/*
