@@ -37,6 +37,13 @@
             <version>5.0.0-beta3</version>
         </dependency>
 
+        <!-- Зависимость для JDBC-драйвера PostgreSQL -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.0</version>
+        </dependency>
+
     </dependencies>
 
     <properties>
