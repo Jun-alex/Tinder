@@ -15,8 +15,15 @@ public class MainApplication {
         ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contextHandler.setContextPath("/");
 
+        //hello путь
         contextHandler.addServlet(new ServletHolder(new HelloWorldServlet()), "/hello");
+
+        //users путь
         contextHandler.addServlet(new ServletHolder(new UsersServlet()), "/users");
+
+        //liked путь
+        contextHandler.addServlet(new ServletHolder(new LikedProfilesServlet()), "/liked");
+
 
         contextHandler.addServlet(DefaultServlet.class, "/");
 
