@@ -18,9 +18,7 @@ import java.util.Map;
 
 public class UsersServlet extends HttpServlet {
 
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/user_choices";
-    private static final String DB_USER = "postgres";
-    private static final String DB_PASSWORD = "mysecretpassword";
+    private Connection conn;
 
     //private List<Profile> profiles;
     //private DAO<Profile> profileDAO;
@@ -28,7 +26,8 @@ public class UsersServlet extends HttpServlet {
 
     private int currentIndex = 0;
 
-    public UsersServlet() {
+    public UsersServlet() throws SQLException {
+        conn = Database.mkConn();
         //примеры профилей храним profileDAO
         profileDAO = new ProfilesInMemory();
     }
@@ -67,38 +66,31 @@ public class UsersServlet extends HttpServlet {
         if (choice != null) {
             //получить ид профиля и пользователя из значения кнопки
             String[] parts = choice.split("_");
-            int profileId = Integer.parseInt(parts[0]);
+            int viewedProfileId = Integer.parseInt(parts[0]);
             String userChoice = parts[1];
 
             //сохраненяем выбор в базу данных
-            try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-                String query = "INSERT INTO choices (profile_id, choice) VALUES (?, ?)";
-                try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                    preparedStatement.setInt(1, profileId);
-                    preparedStatement.setString(2, userChoice);
-                    preparedStatement.executeUpdate();
+            String query = "INSERT INTO user_choices (profile_id, choice) VALUES (?, ?)";
+            try (PreparedStatement ps = conn.prepareStatement(query)) {
+                ps.setInt(1, viewedProfileId);
+                ps.setString(2, userChoice);
+                ps.executeUpdate();
+
+                //индекс текущего профиля, показывает по кругу
+                currentIndex = (currentIndex + 1) % profileDAO.getAll().size();
+
+                //если все профили уже просмотрены, переправляем на страницу /liked
+                if (currentIndex == 0) {
+                    response.sendRedirect("/liked");
+                    return;
                 }
+
+                response.sendRedirect("/users");
+                //response.getWriter().println("Choice for profile " +profileId+ ": " +userChoice);
+                //System.out.println("Choice for profile " +profileId+ ": " +userChoice);
             } catch (SQLException e) {
-                e.printStackTrace();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error");
-                return;
+                throw new RuntimeException(e);
             }
-
-            //индекс текущего профиля, показывает по кругу
-            currentIndex = (currentIndex + 1) % profileDAO.getAll().size();
-
-            //если все профили уже просмотрены, переправляем на страницу /liked
-            if (currentIndex == 0) {
-                response.sendRedirect("/liked");
-                return;
-            }
-
-            response.sendRedirect("/users");
-            //response.getWriter().println("Choice for profile " +profileId+ ": " +userChoice);
-            //System.out.println("Choice for profile " +profileId+ ": " +userChoice);
-        } else {
-            //сообщения об ошибке, если параметр "choice" не передан
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Choice parameter is missing");
         }
     }
 }

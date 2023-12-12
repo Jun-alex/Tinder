@@ -4,7 +4,7 @@ body {
   height: 100%;
 }
 
-body {
+.default-body-style {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-align: center;
@@ -370,5 +370,10 @@ input:focus{
 }
 .msg-box input:focus{
   outline: none;
+}
+.fixed-size {
+  height: 275px;
+  width: 275px;
+  object-fit: cover;
 }
 </style>

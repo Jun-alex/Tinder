@@ -5,9 +5,11 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import java.sql.SQLException;
+
 
 public class MainApplication {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         int port = 8080;
 
         Server server = new Server(port);

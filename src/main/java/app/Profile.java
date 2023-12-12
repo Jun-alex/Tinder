@@ -1,5 +1,7 @@
 package app;
 
+import java.sql.ResultSet;
+
 public class Profile {
     private int id;
     private String name;
