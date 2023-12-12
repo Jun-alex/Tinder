@@ -30,23 +30,25 @@
                             <tbody>
                             <ul>
                                 <#list likedProfiles as profile>
-                                    <tr>
-                                        <td width="10">
-                                            <div class="avatar-img">
-                                                <img class="img-circle" src="${profile.photoUrl}" alt="${profile.name}"/>
-                                            </div>
+<!--                                    <a href="/messages/${profile.id}">-->
+                                        <tr class="clickableElement" data-profile-id="${profile.id}">
+                                            <td width="10">
+                                                <div class="avatar-img">
+                                                    <img class="img-circle" src="${profile.photoUrl}" alt="${profile.name}"/>
+                                                </div>
 
-                                        </td>
-                                        <td class="align-middle">
-                                            ${profile.name}
-                                        </td>
-    <!--                                    <td class="align-middle">-->
-    <!--                                        Builder Sales Agent-->
-    <!--                                    </td>-->
-    <!--                                    <td  class="align-middle">-->
-    <!--                                        Last Login:  6/10/2017<br><small class="text-muted">5 days ago</small>-->
-    <!--                                    </td>-->
-                                    </tr>
+                                            </td>
+                                            <td class="align-middle">
+                                                ${profile.name}
+                                            </td>
+        <!--                                    <td class="align-middle">-->
+        <!--                                        Builder Sales Agent-->
+        <!--                                    </td>-->
+        <!--                                    <td  class="align-middle">-->
+        <!--                                        Last Login:  6/10/2017<br><small class="text-muted">5 days ago</small>-->
+        <!--                                    </td>-->
+                                        </tr>
+<!--                                    </a>-->
                                 </#list>
                             </ul>
                             </tbody>
@@ -57,6 +59,17 @@
         </div>
     </div>
 </div>
-
+<script>
+    const clickableElements = document.querySelectorAll('.clickableElement');
+    clickableElements.forEach(function(el) {
+        el.addEventListener('click', function() {
+            const profileId = el.getAttribute('data-profile-id');
+            console.log(profileId);
+            if (profileId) {
+                window.location.href = "/message/" + profileId;
+            }
+    })
+})
+</script>
 </body>
 </html>
