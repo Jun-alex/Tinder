@@ -7,9 +7,7 @@ import freemarker.template.TemplateException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +18,8 @@ public class LikedProfilesServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //FreeMarker
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-        cfg.setClassForTemplateLoading(MainApplication.class, "templates");
+        cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
+//        cfg.setClassForTemplateLoading(MainApplication.class, "templates");
 
         //список понравившихся профилей
         List<Profile> likedProfiles = getLikedProfiles();
@@ -30,19 +29,18 @@ public class LikedProfilesServlet extends HttpServlet {
         input.put("likedProfiles", likedProfiles);
 
         //шаблон FreeMarker
-        StringWriter writer = new StringWriter();
-        try {
-            Template template = new Template("liked-template", new StringReader(Templates.LIKED_PROFILES_PAGE), cfg);
-            template.process(input, writer);
+//        StringWriter writer = new StringWriter();
+        try (PrintWriter writer = response.getWriter()) {
+//            Template template = new Template("liked-template", new StringReader(Templates.LIKED_PROFILES_PAGE), cfg);
+            Template temp = cfg.getTemplate("people-list.html");
+            temp.process(input, writer);
         } catch (TemplateException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Template processing error");
-            return;
         }
 
-        //вывод результата
-        response.setContentType("text/html");
-        response.getWriter().println(writer.toString());
+//        response.setContentType("text/html");
+//        response.getWriter().println(writer.toString());
     }
 
     private List<Profile> getLikedProfiles() {

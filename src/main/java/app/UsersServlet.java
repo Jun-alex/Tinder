@@ -7,9 +7,7 @@ import freemarker.template.TemplateException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -38,27 +36,29 @@ public class UsersServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //FreeMarker
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-        cfg.setClassForTemplateLoading(MainApplication.class, "templates");
+//        cfg.setClassForTemplateLoading(MainApplication.class, "templates");
+        cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
 
         //передача в шаблон
-        Map<String, Object> input = new HashMap<>();
-        input.put("profiles", profileDAO);
-        input.put("currentIndex", currentIndex);
+        Map<String, Object> dataForFreemarker = new HashMap<>();
+        dataForFreemarker.put("profiles", profileDAO);
+        dataForFreemarker.put("currentIndex", currentIndex);
 
         //шаблон FreeMarker
-        StringWriter writer = new StringWriter();
-        try {
-            Template template = new Template("template", new StringReader(Templates.USERS_PAGE), cfg);
-            template.process(input, writer);
+//        StringWriter writer = new StringWriter();
+        try (PrintWriter writer = response.getWriter()) {
+//            Template template = new Template("template", new StringReader(Templates.USERS_PAGE), cfg);
+            Template temp = cfg.getTemplate("like-page.html");
+//            Template template = new Template("template", new StringReader(Templates.USERS_PAGE), cfg);
+            temp.process(dataForFreemarker, writer);
+//            template.process(input, writer);
         } catch (TemplateException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Template processing error");
-            return;
         }
 
-        // Вывод результата
-        response.setContentType("text/html");
-        response.getWriter().println(writer.toString());
+//        response.setContentType("text/html");
+//        response.getWriter().println(writer.toString());
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

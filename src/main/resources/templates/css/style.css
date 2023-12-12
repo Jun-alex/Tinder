@@ -1,3 +1,4 @@
+<style>
 html,
 body {
   height: 100%;
@@ -91,11 +92,15 @@ i {  vertical-align: middle; }
 .avatar-img {
   display: flex;
   align-items: center;
+  height: 70px;
+  width: 70px;
 }
 
 .img-circle {
   border-radius: 50%;
-  width: 70px;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
 .chat
@@ -366,4 +371,4 @@ input:focus{
 .msg-box input:focus{
   outline: none;
 }
-
+</style>

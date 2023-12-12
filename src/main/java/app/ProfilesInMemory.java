@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfilesInMemory implements ProfileDAO {
-    private List<Profile> profiles;
+    private final List<Profile> profiles;
 
     public ProfilesInMemory() {
-        profiles = new ArrayList<>();
-
         profiles = new ArrayList<>();
         profiles.add(new Profile(1, "John",
                 "https://hips.hearstapps.com/hmg-prod/images/gettyimages-936360206.jpg"));

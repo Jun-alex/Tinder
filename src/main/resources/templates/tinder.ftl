@@ -11,10 +11,12 @@
     <title>Signin Template for Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <#include "css/bootstrap.min.css">
+    <!--    <link href="bootstrap.min.css" rel="stylesheet">-->
 
     <!-- Custom styles for this template -->
-    <link rel="stylesheet" href="css/style.css">
+    <#include "css/style.css">
+    <!--    <link rel="stylesheet" href="style.css">-->
 </head>
 
 <body class="text-center">
