@@ -1,7 +1,10 @@
 package app;
 
+import app.servlet.LikedProfilesServlet;
+import app.servlet.LoginServlet;
+import app.servlet.MessageServlet;
+import app.servlet.UsersServlet;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
@@ -17,13 +20,12 @@ public class TinderApp {
         ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contextHandler.setContextPath("/");
 
-        contextHandler.addServlet(new ServletHolder(new HelloWorldServlet()), "/hello");
         contextHandler.addServlet(new ServletHolder(new UsersServlet()), "/users");
         contextHandler.addServlet(new ServletHolder(new LikedProfilesServlet()), "/liked");
         contextHandler.addServlet(new ServletHolder(new MessageServlet()), "/message/*");
+        contextHandler.addServlet(new ServletHolder(new LoginServlet()), "/login");
 
-
-        contextHandler.addServlet(DefaultServlet.class, "/");
+        contextHandler.addServlet(new ServletHolder(new LoginServlet()), "/*");
 
         server.setHandler(contextHandler);
 
