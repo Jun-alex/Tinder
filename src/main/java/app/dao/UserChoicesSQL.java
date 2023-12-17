@@ -90,7 +90,10 @@ public class UserChoicesSQL implements DAO<Like>{
         return Optional.of(0);
     }
     public List<User> getLikedProfiles() throws SQLException {
-        String select = "select id, user_id, profile_id, choice from user_choices where choice='like';";
+        String select = """
+                  select u.id, name, photo_url from users u, user_choices
+                  where user_choices.profile_id = u.id and user_choices.choice = 'like'
+                  """;
         PreparedStatement ps = conn.prepareStatement(select);
         ResultSet rs = ps.executeQuery();
 
