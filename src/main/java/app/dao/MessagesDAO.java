@@ -1,6 +1,5 @@
 package app.dao;
 
-import app.db.Database;
 import app.model.Message;
 import java.sql.*;
 import java.time.ZoneId;
@@ -9,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class MessageSQL implements DAO<Message>{
-    private Connection conn;
-    public MessageSQL() throws SQLException {
-        conn = Database.mkConn();
+public class MessagesDAO implements DAO<Message>{
+    private final Connection conn;
+    public MessagesDAO(Connection conn) {
+        this.conn = conn;
     }
     public List<Message> getMessagesForParticularChat(int user_id_from, int user_id_to) throws SQLException {
         String sql = "select * from messages where user_id_from=? and user_id_to=?";
-        List<Message> messages = new ArrayList<Message>();
+        List<Message> messages = new ArrayList<>();
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, user_id_from);
         ps.setInt(2, user_id_to);
@@ -72,11 +71,11 @@ public class MessageSQL implements DAO<Message>{
         String insert = "insert into messages(user_id_from, user_id_to, message, time) VALUES(?,?,?,?)";
 
 //        Отримуємо timestamp у мілісекундах
-        Timestamp timestamp = new Timestamp(msg.getTime().toInstant().getEpochSecond() * 1000L);
+        Timestamp timestamp = new Timestamp(msg.time().toInstant().getEpochSecond() * 1000L);
         PreparedStatement ps = conn.prepareStatement(insert);
-        ps.setInt(1, msg.getUserIdFrom());
-        ps.setInt(2, msg.getUserIdTo());
-        ps.setString(3, msg.getMessage());
+        ps.setInt(1, msg.userIdFrom());
+        ps.setInt(2, msg.userIdTo());
+        ps.setString(3, msg.message());
         ps.setTimestamp(4, timestamp);
         ps.execute();
     }
@@ -90,9 +89,9 @@ public class MessageSQL implements DAO<Message>{
                 """;
 
         PreparedStatement st = conn.prepareStatement(update);
-        st.setString(1, msg.getMessage());
-        st.setInt(2, msg.getUserIdFrom());
-        st.setInt(3, msg.getUserIdTo());
+        st.setString(1, msg.message());
+        st.setInt(2, msg.userIdFrom());
+        st.setInt(3, msg.userIdTo());
         st.execute();
     }
 

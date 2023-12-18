@@ -1,6 +1,5 @@
 package app.dao;
 
-import app.db.Database;
 import app.model.LoginedUser;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class LoginedUsersSQL implements DAO<LoginedUser> {
+public class LoginedUsersDAO implements DAO<LoginedUser> {
     private final Connection conn;
 
-    public LoginedUsersSQL() throws SQLException {
-        conn = Database.mkConn();
+    public LoginedUsersDAO(Connection conn) {
+        this.conn = conn;
     }
 
     @Override

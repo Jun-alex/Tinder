@@ -1,12 +1,10 @@
-Teamwork: 
-Alexander Lynnyk.
-Vladyslav Soruk.
-Denys Strizhalov.
+# Teamwork:
 
-Alexander Lynnyk:
-GitHub repository configuring.
-Assignments: from 1-16 have been completed.
+1. **Alexander Lynnyk**:
+ - GitHub repository configuring
+ - Assignments: 1-16 have been completed
 
-Vladyslav Soruk:
+2. **Vladyslav Soruk**:
+ - Database, LikedProfilesServlet, MessagesServlet, LoginServlet creation
 
-Denys Strizhalov:
+3. **Denys Strizhalov**:

@@ -8,10 +8,8 @@
 
     <title>People list</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-    <!-- Bootstrap core CSS -->
-    <#include "css/bootstrap.min.css">
 
-<!--     Custom styles for this template-->
+    <#include "css/bootstrap.min.css">
     <#include "css/style.css">
 </head>
 <body>
@@ -21,7 +19,7 @@
         <div class="col-8 offset-2">
             <div class="panel panel-default user_panel">
                 <div class="panel-heading">
-                    <h3 class="panel-title">User List</h3>
+                    <h3 class="panel-title">Liked users list</h3>
                 </div>
                 <div class="panel-body">
                     <div class="table-container">
@@ -29,25 +27,17 @@
                             <tbody>
                             <ul>
                                 <#list likedProfiles as profile>
-<!--                                    <a href="/messages/${profile.id}">-->
-                                        <tr class="clickableElement" data-profile-id="${profile.id}">
+                                        <tr class="clickableElement" data-profile-id="${profile.id()}">
                                             <td width="10">
                                                 <div class="avatar-img">
-                                                    <img class="img-circle" src="${profile.photoUrl}" alt="${profile.name}"/>
+                                                    <img class="img-circle" src="${profile.photoUrl()}" alt="${profile.name()}"/>
                                                 </div>
 
                                             </td>
                                             <td class="align-middle">
-                                                ${profile.name}
+                                                ${profile.name()}
                                             </td>
-        <!--                                    <td class="align-middle">-->
-        <!--                                        Builder Sales Agent-->
-        <!--                                    </td>-->
-        <!--                                    <td  class="align-middle">-->
-        <!--                                        Last Login:  6/10/2017<br><small class="text-muted">5 days ago</small>-->
-        <!--                                    </td>-->
                                         </tr>
-<!--                                    </a>-->
                                 </#list>
                             </ul>
                             </tbody>
@@ -63,9 +53,8 @@
     clickableElements.forEach(function(el) {
         el.addEventListener('click', function() {
             const profileId = el.getAttribute('data-profile-id');
-            console.log(profileId);
             if (profileId) {
-                window.location.href = "/message/" + profileId;
+                window.location.href = "/messages/" + profileId;
             }
     })
 })

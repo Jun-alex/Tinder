@@ -1,9 +1,9 @@
 package app.servlet;
-import app.dao.UserChoicesSQL;
-import app.model.Auth;
+
+import app.model.CookiesService;
+import app.service.UserChoicesService;
 import app.utility.ResourcesOps;
-import app.model.User;
-import app.db.Database;
+import app.model.Profile;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -17,16 +17,14 @@ import java.util.*;
 
 public class LikedProfilesServlet extends HttpServlet {
 
-    private final Connection conn;
-    private final UserChoicesSQL userChoicesService;
+    private final UserChoicesService userChoicesService;
 
-    public LikedProfilesServlet() throws SQLException {
-        conn = Database.mkConn();
-        userChoicesService = new UserChoicesSQL();
+    public LikedProfilesServlet(Connection conn) {
+        userChoicesService = new UserChoicesService(conn);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Optional<String> cookieValue = Auth.getCookieValue(request);
+        Optional<String> cookieValue = CookiesService.getCookieValue(request);
         if (cookieValue.isEmpty()) {
             response.sendRedirect("/login");
             return;
@@ -35,7 +33,7 @@ public class LikedProfilesServlet extends HttpServlet {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
         cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
 
-        List<User> likedProfiles;
+        List<Profile> likedProfiles;
         try {
             likedProfiles = userChoicesService.getLikedProfiles();
         } catch (SQLException e) {
@@ -46,7 +44,7 @@ public class LikedProfilesServlet extends HttpServlet {
         input.put("likedProfiles", likedProfiles);
 
         try (PrintWriter writer = response.getWriter()) {
-            Template temp = cfg.getTemplate("people-list.html");
+            Template temp = cfg.getTemplate("liked-people-list.html");
 //            Показуємо користувачу html сторінку фрімаркеру (пролайкані профілі)
             temp.process(input, writer);
         } catch (TemplateException e) {

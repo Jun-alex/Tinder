@@ -8,10 +8,8 @@
 
     <title>Chat</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-    <!-- Bootstrap core CSS -->
-    <#include "css/bootstrap.min.css">
 
-    <!-- Custom styles for this template -->
+    <#include "css/bootstrap.min.css">
     <#include "css/style.css">
 </head>
 <body>
@@ -23,7 +21,7 @@
                 <div class="row header-one text-white p-1">
                     <div class="col-md-6 name pl-2">
                         <i class="fa fa-comment"></i>
-                        <h6 class="ml-1 mb-0">${user.name}</h6>
+                        <h6 class="ml-1 mb-0">${profile.name()}</h6>
                     </div>
                     <div class="col-md-6 options text-right pr-0">
                         <i class="fa fa-window-minimize hide-chat-box hover text-center pt-1"></i>
@@ -36,7 +34,7 @@
                 <div class="row header-two w-100">
                     <div class="col-md-6 options-left pl-1">
                         <i class="fa fa-video-camera mr-3"></i>
-                        <i class="fa fa-user-plus"></i>
+                        <i class="fa fa-profile-plus"></i>
                     </div>
                     <div class="col-md-6 options-right text-right pr-2">
                         <i class="fa fa-cog"></i>
@@ -53,14 +51,14 @@
                         </li>
                         <li class="receive-msg float-left mb-2">
                             <div class="sender-img">
-                                <img src="${user.photoUrl}" class="float-left">
+                                <img src="${profile.photoUrl()}" class="float-left">
                             </div>
                             <div class="receive-msg-desc float-left ml-2">
                                 <p class="bg-white m-0 pt-1 pb-1 pl-2 pr-2 rounded">
                                     hiii <br>
                                     How are you ?<br>
                                 </p>
-                                <span class="receive-msg-time">${user.name}, Jan 25, 6:20 PM</span>
+                                <span class="receive-msg-time">${profile.name()}, Jan 25, 6:20 PM</span>
                             </div>
                         </li>
                         <li class="send-msg float-right mb-2">
@@ -71,7 +69,7 @@
                         </li>
                         <li class="receive-msg float-left mb-2">
                             <div class="sender-img">
-                                <img src="${user.photoUrl}" class="float-left">
+                                <img src="${profile.photoUrl()}" class="float-left">
                             </div>
                             <div class="receive-msg-desc float-left ml-2">
                                 <p class="bg-white m-0 pt-1 pb-1 pl-2 pr-2 rounded">
@@ -85,7 +83,7 @@
                         <ul>
                             <li class="send-msg float-right mb-2">
                                 <p class="pt-1 pb-1 pl-2 pr-2 m-0 rounded">
-                                    ${message.getMessage()}
+                                    ${message.message()}
                                 </p>
                                 <span class="receive-msg-time">${message.getTimeString()}</span>
                             </li>
@@ -94,14 +92,18 @@
 
                 </div>
 
-                <form action="/message/${chatId}" method="POST">
+                <form action="/messages/${chatId}" method="POST">
                     <div class="col-md-12 p-2 msg-box border border-primary">
                         <div class="row">
                             <div class="col-md-2 options-left">
                                 <i class="fa fa-smile-o"></i>
                             </div>
                             <div class="col-md-7 pl-0">
-                                <input name="input" type="text" class="border-0" placeholder="Send message" required/>
+                                <input name="input"
+                                       type="text"
+                                       class="border-0"
+                                       placeholder="Send message"
+                                       required/>
                             </div>
                             <div class="col-md-3 text-right options-right">
                                 <i class="fa fa-picture-o mr-2"></i>

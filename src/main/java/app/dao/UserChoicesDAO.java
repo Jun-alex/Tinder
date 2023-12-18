@@ -1,8 +1,7 @@
 package app.dao;
 
-import app.db.Database;
 import app.model.Like;
-import app.model.User;
+import app.model.Profile;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserChoicesSQL implements DAO<Like>{
+public class UserChoicesDAO implements DAO<Like>{
     private final Connection conn;
 
-    public UserChoicesSQL() throws SQLException {
-        this.conn = Database.mkConn();
+    public UserChoicesDAO(Connection conn) {
+        this.conn = conn;
     }
 
     @Override
@@ -51,9 +50,9 @@ public class UserChoicesSQL implements DAO<Like>{
     public void add(Like like) throws SQLException {
         String insert = "INSERT INTO user_choices (user_id, profile_id, choice) VALUES (?, ?, ?)";
         PreparedStatement ps = conn.prepareStatement(insert);
-        ps.setInt(1, like.getUserId());
-        ps.setInt(2, like.getProfileId());
-        ps.setString(3, like.getChoice());
+        ps.setInt(1, like.userId());
+        ps.setInt(2, like.profileId());
+        ps.setString(3, like.choice());
         ps.execute();
     }
 
@@ -66,9 +65,9 @@ public class UserChoicesSQL implements DAO<Like>{
                 """;
 
         PreparedStatement st = conn.prepareStatement(update);
-        st.setString(1, like.getChoice());
-        st.setInt(2, like.getUserId());
-        st.setInt(3, like.getProfileId());
+        st.setString(1, like.choice());
+        st.setInt(2, like.userId());
+        st.setInt(3, like.profileId());
         st.execute();
     }
 
@@ -89,17 +88,17 @@ public class UserChoicesSQL implements DAO<Like>{
         }
         return Optional.of(0);
     }
-    public List<User> getLikedProfiles() throws SQLException {
+    public List<Profile> getLikedProfiles() throws SQLException {
         String select = """
-                  select u.id, name, photo_url from users u, user_choices
-                  where user_choices.profile_id = u.id and user_choices.choice = 'like'
+                  select p.id, name, photo_url from profiles p, user_choices uc
+                  where uc.profile_id = p.id and uc.choice = 'like'
                   """;
         PreparedStatement ps = conn.prepareStatement(select);
         ResultSet rs = ps.executeQuery();
 
-        ArrayList<User> likedProfiles = new ArrayList<>();
+        ArrayList<Profile> likedProfiles = new ArrayList<>();
         while (rs.next()) {
-            User profile = User.getUserFromRs(rs);
+            Profile profile = Profile.getUserFromRs(rs);
             likedProfiles.add(profile);
         }
         return likedProfiles;

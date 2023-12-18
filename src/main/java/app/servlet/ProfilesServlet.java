@@ -1,13 +1,12 @@
 package app.servlet;
 
-import app.dao.LoginedUsersSQL;
-import app.dao.UserChoicesSQL;
-import app.dao.UsersSQL;
-import app.model.Auth;
+import app.model.CookiesService;
 import app.model.Like;
-import app.model.User;
+import app.model.Profile;
+import app.service.LoginedUsersService;
+import app.service.ProfilesService;
+import app.service.UserChoicesService;
 import app.utility.ResourcesOps;
-import app.db.Database;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -22,26 +21,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class UsersServlet extends HttpServlet {
+public class ProfilesServlet extends HttpServlet {
 
-    private Connection conn;
-    private LoginedUsersSQL loginedUsersService;
-    private UserChoicesSQL userChoicesService;
-    private UsersSQL profileDAO;
-    private int profilesQuantity;
+    private final LoginedUsersService loginedUsersService;
+    private final UserChoicesService userChoicesService;
+    private final ProfilesService profilesService;
+    private final int profilesQuantity;
 
     private int currentIndex = 1;
 
-    public UsersServlet() throws SQLException {
-        conn = Database.mkConn();
-        profileDAO = new UsersSQL();
-        userChoicesService = new UserChoicesSQL();
-        loginedUsersService = new LoginedUsersSQL();
-        profilesQuantity = profileDAO.allProfilesQuantity();
+    public ProfilesServlet(Connection conn) throws SQLException {
+        loginedUsersService = new LoginedUsersService(conn);
+        userChoicesService = new UserChoicesService(conn);
+        profilesService = new ProfilesService(conn);
+        profilesQuantity = profilesService.allProfilesQuantity();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Optional<String> cookieValue = Auth.getCookieValue(request);
+        Optional<String> cookieValue = CookiesService.getCookieValue(request);
         if (cookieValue.isEmpty()) {
             response.sendRedirect("/login");
             return;
@@ -70,9 +67,9 @@ public class UsersServlet extends HttpServlet {
 
         // передача в шаблон
         Map<String, Object> dataForFreemarker = new HashMap<>();
-        User profile;
+        Profile profile;
         try {
-            profile = profileDAO.getById(currentIndex).get();
+            profile = profilesService.getById(currentIndex).get();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -80,7 +77,7 @@ public class UsersServlet extends HttpServlet {
 
         // шаблон FreeMarker
         try (PrintWriter writer = response.getWriter()) {
-            Template temp = cfg.getTemplate("like-page.html");
+            Template temp = cfg.getTemplate("like-dislike-page.html");
             temp.process(dataForFreemarker, writer);
         } catch (TemplateException e) {
             e.printStackTrace();
@@ -97,7 +94,7 @@ public class UsersServlet extends HttpServlet {
             int viewedProfileId = Integer.parseInt(parts[0]);
             String userChoice = parts[1];
 
-            String cookie = Auth.getCookieValue(request).get();
+            String cookie = CookiesService.getCookieValue(request).get();
 
             //сохраненяем выбор в базу данных
             try {
@@ -106,7 +103,7 @@ public class UsersServlet extends HttpServlet {
                 userChoicesService.add(like);
 
                 //индекс текущего профиля, показывает по кругу
-                currentIndex = (currentIndex + 1) % profileDAO.getAll().size();
+                currentIndex = (currentIndex + 1) % profilesService.getAll().size();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -121,4 +118,3 @@ public class UsersServlet extends HttpServlet {
         }
     }
 }
-

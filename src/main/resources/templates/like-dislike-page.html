@@ -8,10 +8,8 @@
 
     <title>Like page</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-    <!-- Bootstrap core CSS -->
-    <#include "css/bootstrap.min.css">
 
-    <!-- Custom styles for this template -->
+    <#include "css/bootstrap.min.css">
     <#include "css/style.css">
 </head>
 <body style="background-color: #f5f5f5;" class="default-body-style">
@@ -22,21 +20,30 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 col-lg-12 col-md-12 text-center">
-                        <img src="${profile.photoUrl}" alt="${profile.name}" class="mx-auto rounded-circle img-fluid fixed-size">
+                        <img src="${profile.photoUrl}"
+                             alt="${profile.name}"
+                             class="mx-auto rounded-circle img-fluid fixed-size">
                         <h3 class="mb-0 text-truncated">${profile.name}</h3>
                         <br>
                     </div>
                     <div class="col-12 col-lg-6">
-                        <button type="submit" name="choice" value="${profile.id}_dislike" class="btn btn-outline-danger btn-block"><span class="fa fa-times"></span> Dislike</button>
+                        <button type="submit"
+                                name="choice"
+                                value="${profile.id}_dislike"
+                                class="btn btn-outline-danger btn-block">
+                                <span class="fa fa-times"></span> Dislike
+                        </button>
                     </div>
                     <div class="col-12 col-lg-6">
-                        <button type="submit" name="choice" value="${profile.id}_like" class="btn btn-outline-success btn-block"><span class="fa fa-heart"></span> Like</button>
+                        <button type="submit"
+                                name="choice"
+                                value="${profile.id}_like"
+                                class="btn btn-outline-success btn-block">
+                            <span class="fa fa-heart"></span> Like
+                        </button>
                     </div>
-                    <!--/col-->
                 </div>
-                <!--/row-->
             </div>
-            <!--/card-block-->
         </div>
     </form>
 </div>

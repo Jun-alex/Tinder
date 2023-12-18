@@ -5,9 +5,9 @@ import java.sql.SQLException;
 
 public class LoginedUser {
     private int id;
-    private String email;
-    private String password;
-    private String cookie;
+    private final String email;
+    private final String password;
+    private final String cookie;
     public LoginedUser(String email, String password, String cookie) {
         this.email = email;
         this.password = password;

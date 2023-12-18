@@ -1,7 +1,6 @@
 package app.dao;
 
-import app.db.Database;
-import app.model.User;
+import app.model.Profile;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,76 +10,76 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UsersSQL implements DAO<User> {
+public class ProfilesDAO implements DAO<Profile> {
     private final Connection conn;
 
-    public UsersSQL() throws SQLException {
-        conn = Database.mkConn();
+    public ProfilesDAO(Connection conn) {
+        this.conn = conn;
     }
 
     @Override
-    public List<User> getAll() throws SQLException {
-        String selectAll = "select id, name, photo_url from users;";
+    public List<Profile> getAll() throws SQLException {
+        String selectAll = "select id, name, photo_url from profiles;";
         PreparedStatement st = conn.prepareStatement(selectAll);
         ResultSet rs = st.executeQuery();
 
-        ArrayList<User> data = new ArrayList<>();
+        ArrayList<Profile> data = new ArrayList<>();
         while (rs.next()) {
-            User user = User.getUserFromRs(rs);
-            data.add(user);
+            Profile profile = Profile.getUserFromRs(rs);
+            data.add(profile);
         }
         return data;
     }
 
     @Override
-    public Optional<User> getById(int id) throws SQLException {
-        String select = "select id, name, photo_url from users where id = ?;";
+    public Optional<Profile> getById(int id) throws SQLException {
+        String select = "select id, name, photo_url from profiles where id = ?;";
         PreparedStatement st = conn.prepareStatement(select);
         st.setInt(1, id);
         ResultSet rs = st.executeQuery();
 
         if(rs.next()) {
-            User s = User.getUserFromRs(rs);
+            Profile s = Profile.getUserFromRs(rs);
             return Optional.of(s);
         }
         return Optional.empty();
     }
 
     @Override
-    public void add(User user) throws SQLException {
-        String addUser = "insert into users(name, photo_url) values (?, ?);";
+    public void add(Profile profile) throws SQLException {
+        String addUser = "insert into profiles(name, photo_url) values (?, ?);";
         PreparedStatement ps = conn.prepareStatement(addUser);
-        ps.setString(1, user.getName());
-        ps.setString(2, user.getPhotoUrl());
+        ps.setString(1, profile.name());
+        ps.setString(2, profile.photoUrl());
         ps.execute();
     }
 
     @Override
-    public void update(User user) throws SQLException {
+    public void update(Profile profile) throws SQLException {
         String update = """
-                update users
+                update profiles
                 set name = ?,
                     photo_url = ?,
                 where id = ?;
                 """;
 
         PreparedStatement st = conn.prepareStatement(update);
-        st.setString(1, user.getName());
-        st.setString(2, user.getPhotoUrl());
-        st.setInt(3, user.getId());
+        st.setString(1, profile.name());
+        st.setString(2, profile.photoUrl());
+        st.setInt(3, profile.id());
         st.execute();
     }
 
     @Override
     public void delete(int id) throws SQLException {
-        String delete = "delete from users where id = ?;";
+        String delete = "delete from profiles where id = ?;";
         PreparedStatement st = conn.prepareStatement(delete);
         st.setInt(1, id);
         st.execute();
     }
 
     public int allProfilesQuantity() throws SQLException {
-        String count = "select count(*) from users;";
+        String count = "select count(*) from profiles;";
         PreparedStatement st = conn.prepareStatement(count);
         ResultSet rs = st.executeQuery();
         int quantity = 0;

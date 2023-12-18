@@ -1,14 +1,12 @@
 package app.servlet;
 
-import app.dao.LoginedUsersSQL;
-import app.dao.MessageSQL;
-import app.model.Auth;
+import app.model.CookiesService;
 import app.model.Message;
+import app.model.Profile;
+import app.service.LoginedUsersService;
+import app.service.MessagesService;
+import app.service.ProfilesService;
 import app.utility.ResourcesOps;
-import app.model.User;
-import app.dao.UsersSQL;
-import app.dao.DAO;
-import app.db.Database;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -24,22 +22,20 @@ import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-public class MessageServlet extends HttpServlet {
-    private final Connection conn;
-    private final DAO<User> usersDatabase;
-    private final LoginedUsersSQL loginedUsersService;
-    private final MessageSQL messagesDatabase;
+public class MessagesServlet extends HttpServlet {
+    private final ProfilesService profilesService;
+    private final LoginedUsersService loginedUsersService;
+    private final MessagesService messagesService;
 
-    public MessageServlet() throws SQLException {
-        conn = Database.mkConn();
-        usersDatabase = new UsersSQL();
-        loginedUsersService = new LoginedUsersSQL();
-        messagesDatabase = new MessageSQL();
+    public MessagesServlet(Connection conn) {
+        profilesService = new ProfilesService(conn);
+        loginedUsersService = new LoginedUsersService(conn);
+        messagesService = new MessagesService(conn);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        Optional<String> cookieValue = Auth.getCookieValue(req);
+        Optional<String> cookieValue = CookiesService.getCookieValue(req);
         if (cookieValue.isEmpty()) {
             resp.sendRedirect("/login");
             return;
@@ -49,7 +45,7 @@ public class MessageServlet extends HttpServlet {
         cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
 
 //        Отримуємо user_id_from (id людини, яка надсилає повідомлення)
-        String cookie = Auth.getCookieValue(req).get();
+        String cookie = CookiesService.getCookieValue(req).get();
         int loginedUserId;
         try {
             loginedUserId = loginedUsersService.getLoginedUserId(cookie);
@@ -66,17 +62,17 @@ public class MessageServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        User user;
+        Profile profile;
         List<Message> messagesForParticularChat;
         try {
-            user = usersDatabase.getById(chatId).get();
-            messagesForParticularChat = messagesDatabase.getMessagesForParticularChat(loginedUserId, chatId);
+            profile = profilesService.getById(chatId).get();
+            messagesForParticularChat = messagesService.getMessagesForParticularChat(loginedUserId, chatId);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
         Map<String, Object> input = new HashMap<>();
-        input.put("user", user);
+        input.put("profile", profile);
         input.put("messages", messagesForParticularChat);
         input.put("chatId", chatId);
 
@@ -91,7 +87,7 @@ public class MessageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String cookie = Auth.getCookieValue(req).get();
+        String cookie = CookiesService.getCookieValue(req).get();
 
         ZonedDateTime time = ZonedDateTime.now(); // 2023-12-14T13:35:13.964446900+02:00[Europe/Kiev] format
         String path = req.getPathInfo();
@@ -101,11 +97,10 @@ public class MessageServlet extends HttpServlet {
         try {
             int loginedUserId = loginedUsersService.getLoginedUserId(cookie);
             // Вписуємо в базу даних повідомлення від користувача
-            messagesDatabase.add(new Message(loginedUserId, userIdTo, input, time));
+            messagesService.add(new Message(loginedUserId, userIdTo, input, time));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         doGet(req,resp);
     }
 }
-
