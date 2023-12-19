@@ -37,28 +37,31 @@ public class ProfilesServlet extends HttpServlet {
         profilesQuantity = profilesService.allProfilesQuantity();
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Optional<String> cookieValue = CookiesService.getCookieValue(request);
-        if (cookieValue.isEmpty()) {
-            response.sendRedirect("/login");
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Optional<String> cookieValue = CookiesService.getCookieValue(req);
+
+        if (cookieValue.isEmpty() ||
+                loginedUsersService.getLoginedUserIdByCookie(cookieValue.get()).isEmpty()) {
+            resp.sendRedirect("/login");
             return;
         }
 
         int maxProfileId;
+        int userId = loginedUsersService.getLoginedUserIdByCookie(cookieValue.get()).get();
         try {
-            maxProfileId = userChoicesService.getMaxProfileId().get();
+            maxProfileId = userChoicesService.getSeenProfilesCount(userId).get();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         if (maxProfileId==profilesQuantity){
-            response.sendRedirect("liked");
+            resp.sendRedirect("liked");
             return;
         }
 
 //        Потрібно детектити на якому профілі користувач зупинився,
 //        щоб потім показувати останній профіль, який юзер ще не лайкнув чи
-//        не дізлайкнув. Це можна зробити, присвоївши currentIndex-у найбільший
-//        id лайкнутого профіля (і додавши 1), оскільки профілі ми показуємо по порядку
+//        не дізлайкнув. Це можна зробити, присвоївши currentIndex-у кількість
+//        переглянутих профілей
         currentIndex = maxProfileId + 1; // maxProfileId може бути >= 0
 
         // FreeMarker
@@ -76,17 +79,17 @@ public class ProfilesServlet extends HttpServlet {
         dataForFreemarker.put("profile", profile);
 
         // шаблон FreeMarker
-        try (PrintWriter writer = response.getWriter()) {
+        try (PrintWriter writer = resp.getWriter()) {
             Template temp = cfg.getTemplate("like-dislike-page.html");
             temp.process(dataForFreemarker, writer);
         } catch (TemplateException e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Template processing error");
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Template processing error");
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String choice = request.getParameter("choice");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String choice = req.getParameter("choice");
 
         if (choice != null) {
             // получить id профиля и пользователя из значения кнопки
@@ -94,11 +97,11 @@ public class ProfilesServlet extends HttpServlet {
             int viewedProfileId = Integer.parseInt(parts[0]);
             String userChoice = parts[1];
 
-            String cookie = CookiesService.getCookieValue(request).get();
+            String cookie = CookiesService.getCookieValue(req).get();
 
             //сохраненяем выбор в базу данных
             try {
-                int loginedUserId = loginedUsersService.getLoginedUserId(cookie);
+                int loginedUserId = loginedUsersService.getLoginedUserIdByCookie(cookie).get();
                 Like like = new Like(loginedUserId, viewedProfileId, userChoice);
                 userChoicesService.add(like);
 
@@ -110,11 +113,11 @@ public class ProfilesServlet extends HttpServlet {
 
             //если все профили уже просмотрены, переправляем на страницу /liked
             if (currentIndex == 0) {
-                response.sendRedirect("/liked");
+                resp.sendRedirect("/liked");
                 return;
             }
 
-            response.sendRedirect("/users");
+            resp.sendRedirect("/users");
         }
     }
 }

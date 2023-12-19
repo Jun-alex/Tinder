@@ -78,22 +78,27 @@ public class UserChoicesDAO implements DAO<Like>{
         st.setInt(1, id);
         st.execute();
     }
-    public Optional<Integer> getMaxProfileId() throws SQLException {
-        String select = "select max(profile_id) from user_choices;";
+    public Optional<Integer> getSeenProfilesCount(int userId) throws SQLException {
+        String select = """
+                select count(profile_id) from user_choices
+                    where user_id = ?;
+                """;
         PreparedStatement ps = conn.prepareStatement(select);
+        ps.setInt(1, userId);
         ResultSet rs = ps.executeQuery();
         if(rs.next()) {
-            int max = rs.getInt("max");
-            return Optional.of(max);
+            int count = rs.getInt("count");
+            return Optional.of(count);
         }
         return Optional.of(0);
     }
-    public List<Profile> getLikedProfiles() throws SQLException {
+    public List<Profile> getLikedProfiles(int userId) throws SQLException {
         String select = """
                   select p.id, name, photo_url from profiles p, user_choices uc
-                  where uc.profile_id = p.id and uc.choice = 'like'
+                  where uc.profile_id = p.id and uc.choice = 'like' and uc.user_id = ?;
                   """;
         PreparedStatement ps = conn.prepareStatement(select);
+        ps.setInt(1, userId);
         ResultSet rs = ps.executeQuery();
 
         ArrayList<Profile> likedProfiles = new ArrayList<>();
