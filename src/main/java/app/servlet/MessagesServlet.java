@@ -36,7 +36,9 @@ public class MessagesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Optional<String> cookieValue = CookiesService.getCookieValue(req);
-        if (cookieValue.isEmpty()) {
+
+        if (cookieValue.isEmpty() ||
+                loginedUsersService.getLoginedUserIdByCookie(cookieValue.get()).isEmpty()) {
             resp.sendRedirect("/login");
             return;
         }
@@ -44,17 +46,12 @@ public class MessagesServlet extends HttpServlet {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
         cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
 
-//        Отримуємо user_id_from (id людини, яка надсилає повідомлення)
+//        Отримуємо loginedUserId(user_id_from) (id людини, яка надсилає повідомлення)
         String cookie = CookiesService.getCookieValue(req).get();
-        int loginedUserId;
-        try {
-            loginedUserId = loginedUsersService.getLoginedUserId(cookie);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        int loginedUserId = loginedUsersService.getLoginedUserIdByCookie(cookie).get();
 
         int chatId = 0;
-//        Отримуємо user_id_to (id людини, якій надсилаємо повідомлення) з параметра URL
+//        Отримуємо chatId(user_id_to) (id людини, якій надсилаємо повідомлення) з параметра URL
         String pathInfo = req.getPathInfo().substring(1);
         try {
             chatId = Integer.parseInt(pathInfo);
@@ -95,7 +92,7 @@ public class MessagesServlet extends HttpServlet {
         String input = req.getParameter("input"); // Записує в змінну те, що ввів користувач в input
 
         try {
-            int loginedUserId = loginedUsersService.getLoginedUserId(cookie);
+            int loginedUserId = loginedUsersService.getLoginedUserIdByCookie(cookie).get();
             // Вписуємо в базу даних повідомлення від користувача
             messagesService.add(new Message(loginedUserId, userIdTo, input, time));
         } catch (SQLException e) {
