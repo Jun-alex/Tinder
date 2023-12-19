@@ -6,6 +6,7 @@ import app.model.Profile;
 import app.service.LoginedUsersService;
 import app.service.MessagesService;
 import app.service.ProfilesService;
+import app.service.UserChoicesService;
 import app.utility.ResourcesOps;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -26,11 +27,13 @@ public class MessagesServlet extends HttpServlet {
     private final ProfilesService profilesService;
     private final LoginedUsersService loginedUsersService;
     private final MessagesService messagesService;
+    private final UserChoicesService userChoicesService;
 
     public MessagesServlet(Connection conn) {
         profilesService = new ProfilesService(conn);
         loginedUsersService = new LoginedUsersService(conn);
         messagesService = new MessagesService(conn);
+        userChoicesService = new UserChoicesService(conn);
     }
 
     @Override
@@ -47,16 +50,24 @@ public class MessagesServlet extends HttpServlet {
         cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
 
 //        Отримуємо loginedUserId(user_id_from) (id людини, яка надсилає повідомлення)
-        String cookie = CookiesService.getCookieValue(req).get();
-        int loginedUserId = loginedUsersService.getLoginedUserIdByCookie(cookie).get();
+        int loginedUserId = loginedUsersService.getLoginedUserIdByCookie(cookieValue.get()).get();
 
         int chatId = 0;
 //        Отримуємо chatId(user_id_to) (id людини, якій надсилаємо повідомлення) з параметра URL
         String pathInfo = req.getPathInfo().substring(1);
+
         try {
             chatId = Integer.parseInt(pathInfo);
         } catch (NumberFormatException e) {
             e.printStackTrace();
+        }
+
+//        Якщо користувач зайде по ендпоінту "/messages/${id}", перевіряємо
+//        чи користувач лайкав відповідний профіль. Якщо не лайкав, то пишемо, що
+//        сторінка не знайдена
+        if( !userChoicesService.checkWhetherProfileWasLiked(loginedUserId, chatId) ) {
+            resp.sendError(404, "Sorry, you have no access to text to the user. You have not liked this profile!");
+            return;
         }
 
         Profile profile;

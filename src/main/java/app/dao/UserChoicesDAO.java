@@ -108,4 +108,16 @@ public class UserChoicesDAO implements DAO<Like>{
         }
         return likedProfiles;
     }
+    public boolean checkWhetherProfileWasLiked(int userId, int profileId) throws SQLException {
+        String select = """
+                select profile_id from user_choices
+                where user_id = ? and profile_id = ? and choice = 'like';
+                """;
+        PreparedStatement ps = conn.prepareStatement(select);
+        ps.setInt(1, userId);
+        ps.setInt(2, profileId);
+
+        ResultSet rs = ps.executeQuery();
+        return rs.next();
+    }
 }

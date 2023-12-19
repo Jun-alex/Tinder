@@ -36,4 +36,11 @@ public class UserChoicesService {
     public List<Profile> getLikedProfiles(int userId) throws SQLException {
         return userChoicesDAO.getLikedProfiles(userId);
     }
+    public boolean checkWhetherProfileWasLiked(int userId, int profileId) {
+        try {
+            return userChoicesDAO.checkWhetherProfileWasLiked(userId, profileId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
