@@ -115,17 +115,31 @@ public class LoginedUsersDAO implements DAO<LoginedUser> {
         ResultSet rs = ps.executeQuery();
         return rs.next();
     }
-    public void updateCookie(String cookie, String email, String password) throws SQLException {
-        String update = """
-                update logined_users
-                set current_cookie = ?,
-                where email = ? and password = ?;
-                """;
+//    public void updateCookie(String cookie, String email, String password) throws SQLException {
+//        String update = """
+//                update logined_users
+//                set current_cookie = ?,
+//                where email = ? and password = ?;
+//                """;
+//
+//        PreparedStatement ps = conn.prepareStatement(update);
+//        ps.setString(1, cookie);
+//        ps.setString(2, email);
+//        ps.setString(3, password);
+//        ps.execute();
+//    }
+public void updateCookie(String cookie, String email, String password) throws SQLException {
+    String update = """
+            update logined_users
+            set current_cookie = ?
+            where email = ? and password = ?;
+            """;
 
-        PreparedStatement ps = conn.prepareStatement(update);
+    try (PreparedStatement ps = conn.prepareStatement(update)) {
         ps.setString(1, cookie);
         ps.setString(2, email);
         ps.setString(3, password);
-        ps.execute();
+        ps.executeUpdate();
     }
+}
 }

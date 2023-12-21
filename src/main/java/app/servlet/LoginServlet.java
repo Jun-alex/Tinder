@@ -63,7 +63,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
-        String cookie = CookiesService.getCookieValue(req).get();
+        String cookie = CookiesService.getCookieValue(req).orElse(UUID.randomUUID().toString());
         UserSession userSession = new UserSession(email, password, cookie);
 
 //        Перевіряємо, чи в БД вже є email та password, введені користувачем

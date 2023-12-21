@@ -1,6 +1,9 @@
 package app;
 
+import app.dao.ProfilesInMemory;
 import app.db.Database;
+import app.httpfilter.LoginFilter;
+import app.model.Profile;
 import app.servlet.LikedProfilesServlet;
 import app.servlet.LoginServlet;
 import app.servlet.MessagesServlet;
@@ -9,8 +12,11 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import javax.servlet.DispatcherType;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.EnumSet;
 
 
 public class TinderApp {
@@ -25,10 +31,18 @@ public class TinderApp {
 
         ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contextHandler.setContextPath("/");
+        EnumSet<DispatcherType> tpe = EnumSet.of(DispatcherType.REQUEST);
 
         contextHandler.addServlet(new ServletHolder(new ProfilesServlet(conn)), "/users");
+        contextHandler.addFilter(LoginFilter.class, "/users", tpe);
+
         contextHandler.addServlet(new ServletHolder(new LikedProfilesServlet(conn)), "/liked");
+        contextHandler.addFilter(LoginFilter.class, "/liked", tpe);
+
         contextHandler.addServlet(new ServletHolder(new MessagesServlet(conn)), "/messages/*");
+        contextHandler.addFilter(LoginFilter.class, "/messages", tpe);
+
+
         contextHandler.addServlet(new ServletHolder(new LoginServlet(conn)), "/login");
 
         contextHandler.addServlet(new ServletHolder(new LoginServlet(conn)), "/*");

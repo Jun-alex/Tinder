@@ -8,3 +8,5 @@
  - Database, LikedProfilesServlet, MessagesServlet, LoginServlet creation
 
 3. **Denys Strizhalov**:
+ - HttpFilter, Edit Message model, Під'єднав проєкт до віддаленої бази даних.
+
