@@ -28,7 +28,7 @@ public class ProfilesServlet extends HttpServlet {
     private final ProfilesService profilesService;
     private final int profilesQuantity;
 
-    private int currentIndex = 1;
+    private int currentIndex = 0;
 
     public ProfilesServlet(Connection conn) throws SQLException {
         loginedUsersService = new LoginedUsersService(conn);
@@ -106,13 +106,13 @@ public class ProfilesServlet extends HttpServlet {
                 userChoicesService.add(like);
 
                 //индекс текущего профиля, показывает по кругу
-                currentIndex = (currentIndex + 1) % profilesService.getAll().size();
+//                currentIndex = (currentIndex + 1) % profilesService.getAll().size();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
 
             //если все профили уже просмотрены, переправляем на страницу /liked
-            if (currentIndex == 0) {
+            if (currentIndex == profilesQuantity) {
                 resp.sendRedirect("/liked");
                 return;
             }

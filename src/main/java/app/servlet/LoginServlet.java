@@ -68,20 +68,18 @@ public class LoginServlet extends HttpServlet {
 
 //        Перевіряємо, чи в БД вже є email та password, введені користувачем
         if(loginedUsersService.loginIsPresent(email, password)) {
-//        Якщо в БД вже є такий логін та пароль, то ми оновлюємо йому дані по кукі
+//        Якщо в БД вже є такий логін та пароль, то ми записуємо в таблицю кукі необхідні дані
+            userSessionsService.add(userSession);
+//        Та оновлюємо йому дані по кукі
             loginedUsersService.updateCookie(cookie, email, password);
             resp.sendRedirect("users");
             return;
         }
 
-        try {
 //        Зберігаємо інфу про кукі в БД
-            userSessionsService.add(userSession);
+        userSessionsService.add(userSession);
 //        Зберігаємо нового користувача в БД
-            loginedUsersService.add(new LoginedUser(email, password, cookie));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        loginedUsersService.add(new LoginedUser(email, password, cookie));
         resp.sendRedirect("users");
     }
 }

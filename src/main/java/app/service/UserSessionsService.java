@@ -19,8 +19,12 @@ public class UserSessionsService {
     public Optional<UserSession> getById(int id) throws SQLException {
         return userSessionsDAO.getById(id);
     }
-    public void add(UserSession userSession) throws SQLException {
-        userSessionsDAO.add(userSession);
+    public void add(UserSession userSession) {
+        try {
+            userSessionsDAO.add(userSession);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     public void update(UserSession userSession) throws SQLException {
         userSessionsDAO.update(userSession);

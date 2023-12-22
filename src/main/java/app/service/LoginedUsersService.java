@@ -22,8 +22,12 @@ public class LoginedUsersService {
     public Optional<LoginedUser> getById(int id) throws SQLException {
         return loginedUsersDAO.getById(id);
     }
-    public void add(LoginedUser user) throws SQLException {
-        loginedUsersDAO.add(user);
+    public void add(LoginedUser user) {
+        try {
+            loginedUsersDAO.add(user);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     public void update(LoginedUser user) throws SQLException {
         loginedUsersDAO.update(user);
