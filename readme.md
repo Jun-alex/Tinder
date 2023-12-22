@@ -8,5 +8,5 @@
  - Database, LikedProfilesServlet, MessagesServlet, LoginServlet creation
 
 3. **Denys Strizhalov**:
- - HttpFilter, Edit Message model, Connected the project to a remote database..
+ - HttpFilter, Edit Message model, Connected the project to a remote database, Build, Deploy remote server.
 
