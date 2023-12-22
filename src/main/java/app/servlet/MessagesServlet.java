@@ -47,7 +47,8 @@ public class MessagesServlet extends HttpServlet {
         }
 
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-        cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
+//        cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
+        cfg.setClassForTemplateLoading(MessagesServlet.class, "/templates");
 
 //        Отримуємо loginedUserId(user_id_from) (id людини, яка надсилає повідомлення)
         int loginedUserId = loginedUsersService.getLoginedUserIdByCookie(cookieValue.get()).get();

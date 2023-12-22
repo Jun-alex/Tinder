@@ -66,8 +66,8 @@ public class ProfilesServlet extends HttpServlet {
 
         // FreeMarker
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-        cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
-
+//        cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
+        cfg.setClassForTemplateLoading(ProfilesServlet.class, "/templates");
         // передача в шаблон
         Map<String, Object> dataForFreemarker = new HashMap<>();
         Profile profile;

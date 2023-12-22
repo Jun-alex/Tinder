@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>People list</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+    <#include "css/bootstrap.min.css">
+    <#include "css/style.css">
+</head>
+<body>
+
+<div class="container" style="padding: 20px;">
+    <div class="row">
+        <div class="col-8 offset-2">
+            <div class="panel panel-default user_panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Liked users list</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="table-container">
+                        <table class="table-users table" border="0">
+                            <tbody>
+                            <ul>
+                                <#list likedProfiles as profile>
+                                        <tr class="clickableElement" data-profile-id="${profile.id()}">
+                                            <td width="10">
+                                                <div class="avatar-img">
+                                                    <img class="img-circle" src="${profile.photoUrl()}" alt="${profile.name()}"/>
+                                                </div>
+
+                                            </td>
+                                            <td class="align-middle">
+                                                ${profile.name()}
+                                            </td>
+                                        </tr>
+                                </#list>
+                            </ul>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const clickableElements = document.querySelectorAll('.clickableElement');
+    clickableElements.forEach(function(el) {
+        el.addEventListener('click', function() {
+            const profileId = el.getAttribute('data-profile-id');
+            if (profileId) {
+                window.location.href = "/messages/" + profileId;
+            }
+    })
+})
+</script>
+</body>
+</html>

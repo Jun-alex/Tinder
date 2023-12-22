@@ -46,8 +46,8 @@ public class LoginServlet extends HttpServlet {
         }
 
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-        cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
-
+//        cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
+        cfg.setClassForTemplateLoading(LoginServlet.class, "/templates");
 //        Показуємо користувачу html сторінку форми логіну. При цьому передавати
 //        фрімаркеру в HashMap нічого не потрібно
         try (PrintWriter w = resp.getWriter()) {

@@ -36,7 +36,9 @@ public class LikedProfilesServlet extends HttpServlet {
         }
 
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-        cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
+//        cfg.setDirectoryForTemplateLoading(new File(ResourcesOps.dirUnsafe("templates")));
+        cfg.setClassForTemplateLoading(LikedProfilesServlet.class, "/templates");
+
 
         List<Profile> likedProfiles;
         int userId = loginedUsersService.getLoginedUserIdByCookie(cookieValue.get()).get();

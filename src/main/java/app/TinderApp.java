@@ -51,7 +51,8 @@ public class TinderApp {
 
         try {
             server.start();
-            System.out.println("Server started on http://localhost:" + port);
+//            System.out.println("Server started on http://localhost:" + port);
+            System.out.println("Server started on ec2-18-196-235-59.eu-central-1.compute.amazonaws.com/" + 8089);
             server.join();
         } catch (Exception e) {
             e.printStackTrace();
