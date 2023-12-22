@@ -21,7 +21,7 @@ import java.util.EnumSet;
 
 public class TinderApp {
     public static void main(String[] args) throws SQLException {
-        int port = 8080;
+        int port = 8089;
 
 //        Під'єднуємося до БД по відповідному URL, user, password
 //        та створюємо змінну conn типу Connection для роботи з БД
@@ -52,7 +52,7 @@ public class TinderApp {
         try {
             server.start();
 //            System.out.println("Server started on http://localhost:" + port);
-            System.out.println("Server started on http://ec2-18-196-235-59.eu-central-1.compute.amazonaws.com:" + 8089);
+            System.out.println("Server started on http://ec2-18-196-235-59.eu-central-1.compute.amazonaws.com:" + port);
             server.join();
         } catch (Exception e) {
             e.printStackTrace();
